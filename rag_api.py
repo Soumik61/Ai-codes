@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel
-# from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -15,8 +14,8 @@ import shutil
 
 load_dotenv()
 app=FastAPI(title="Rag_api", version="2.0")
-llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=os.getenv("GOOGLE_API_KEY"), temperature=0,)
-embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=os.getenv("GOOGLE_API_KEY"))
+llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash", google_api_key=os.getenv("GOOGLE_API_KEY"), temperature=0,)
+embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001", google_api_key=os.getenv("GOOGLE_API_KEY"))
 
 class QueryRequest(BaseModel):
     question: str
@@ -77,7 +76,7 @@ async def upload_documents(file: UploadFile = File(...)):
     finally:
         os.unlink(tmp_path)
 
-app.post("/rag-ask", response_model=RAGResponse)
+@app.post("/rag-ask", response_model=RAGResponse)
 async def rag_ask(request: QueryRequest):
     chain = create_rag_chain()
     answer = chain.invoke(request.question)
@@ -91,7 +90,7 @@ async def rag_ask(request: QueryRequest):
         sources=list(set(source_names))
     )
 
-app.post("/health")
+@app.get("/health")
 def health():
     return{
         "status": "RAG API v2 ready!",
@@ -102,5 +101,3 @@ def health():
 if __name__ == "__main__":
     import uvicorn 
     uvicorn.run(app, host="0.0.0.0", port=8081)
-
-
