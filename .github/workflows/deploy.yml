@@ -1,5 +1,49 @@
 name: RAG API Deploy
 on:
   push:
-    branches: master
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: action/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: action/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: lint (flake8)
+        uses: py-actions/flake8@v1
+        with:
+          args: --max-line-length=120
+
+      - name: Test
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          pip install pytest ".[test]" requirements.txt
+          pytest
+
+  docker:
+    needs: lint-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: action/checkout@v4
+
+      - name: Docker login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push
+        run: |
+          docker build -t soumik61/rag-api:${{ github.sha }} .
+          docker push soumik61/rag-api:${{ github.sha }}
+          docker tag soumik/rag-api:${{ github.sha }} soumik61/rag-api:latest
+          docker push soumik61/rag-api:latest
+  
     
