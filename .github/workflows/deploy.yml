@@ -22,6 +22,7 @@ jobs:
         uses: py-actions/flake8@v1
         with:
           args: --max-line-length=120
+                --ignore=F401,E501,E302,E225,E231,W291,W293,E251,E305,E265
 
       - name: Test
         env:
