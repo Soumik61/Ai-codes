@@ -48,7 +48,7 @@ jobs:
         run: |
           docker build -t soumik61/rag-api:${{ github.sha }} .
           docker push soumik61/rag-api:${{ github.sha }}
-          docker tag soumik/rag-api:${{ github.sha }} soumik61/rag-api:latest
+          docker tag soumik61/rag-api:${{ github.sha }} soumik61/rag-api:latest
           docker push soumik61/rag-api:latest
   
     
