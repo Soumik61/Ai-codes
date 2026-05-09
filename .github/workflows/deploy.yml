@@ -50,5 +50,9 @@ jobs:
           docker push soumik61/rag-api:${{ github.sha }}
           docker tag soumik61/rag-api:${{ github.sha }} soumik61/rag-api:latest
           docker push soumik61/rag-api:latest
+
+      # - name: docker run
+      #   run: |
+      #     docker run -d -p 8000:8000 --name rag-api -e GOOGLE_API_KEY="${{ secrets.GOOGLE_API_KEY }}" soumik61/rag-api:latest
   
     

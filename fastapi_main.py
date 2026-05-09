@@ -9,14 +9,16 @@ import os
 
 load_dotenv(override=True)
 app = FastAPI()
-open_api_key = os.environ["OPENAI_API_KEY"] 
+open_api_key = os.environ["OPENAI_API_KEY"]
 
-llm = ChatOpenAI(openai_api_key = open_api_key, model="gpt-5.2", temperature=0)
+llm = ChatOpenAI(openai_api_key=open_api_key, model="gpt-5.2", temperature=0)
 store = {}
 
+
 class ChatRequest(BaseModel):
-    session_id:str
+    session_id: str
     message: str
+
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
@@ -31,6 +33,8 @@ async def chat(request: ChatRequest):
 
     return {"response": response.content}
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

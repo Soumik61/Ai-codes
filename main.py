@@ -1,4 +1,4 @@
-import os 
+import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -16,7 +16,7 @@ prompt = ChatPromptTemplate.from_messages(
 )
 output_parser = StrOutputParser()
 
-#LCEL
+# LCEL
 chain1 = prompt
 chain2 = prompt | llm
 chain3 = prompt | llm | output_parser
@@ -30,4 +30,3 @@ chain3 = prompt | llm | output_parser
 response3 = chain3.invoke({"input": "Speaking of a good japanese food, name one."})
 print(response3)
 print("------------------------")
-
